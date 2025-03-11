@@ -35,7 +35,21 @@ class Role(Base):
         for audition in self.auditions:
             return [audition.location]
         
-   
+    #method to return first hired audition
+    
+    def hired_auditions(self):
+        hired_auditions=[audition for audition in self.auditions if audition.hired]
+        return hired_auditions
+    
+    #method to return first hired audition
+
+    def lead(self):
+        hired_auditions= hired_auditions()
+        if hired_auditions:
+            return hired_auditions[0]
+        else:
+            return "No actor has been hired for this role"
+        
 
 
 
