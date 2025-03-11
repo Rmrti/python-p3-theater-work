@@ -13,20 +13,20 @@ tb_id = Column(Integer, primary_Key= True, autoincrement=True)
 
 class Actor(Base):
     __tablename__ = "actors"
-    id = tb_id
+    id = Column(Integer, primary_key= True, autoincrement=True)
 
     name = Column(String, nullable=False)
     auditions = relationship("Audition", back_populates="actor")
 class Role(Base):
     __tablename__ = "roles"
-    id = tb_id
+    id = Column(Integer, primary_key= True, autoincrement=True)
     character_name=Column(String, nullable=False)
     auditions = relationship("Audition", back_populates="actor")
 
 
 class Audition(Base):
     __tablename__ = "auditions"
-    id = tb_id
+    id = Column(Integer, primary_key= True, autoincrement=True)
     actor_id = Column(Integer, ForeignKey("actors.id"), nullable=False)
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     location= Column(String, nullable=False)
