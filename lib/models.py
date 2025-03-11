@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey, Column, Integer, String, MetaData, Boolean
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref,joinedload
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.session import object_session
 
@@ -34,18 +34,27 @@ class Role(Base):
         session = object_session(self)
         return [loc for (loc,) in session.query(Audition.location).filter(Audition.role_id == self.id).distinct().all()]
 
-    def lead(self):
-        
+    def hired_auditions(self):
         session = object_session(self)
-        lead_audition = session.query(Audition).filter(Audition.role_id == self.id, Audition.hired == True).order_by(Audition.id).first()
-        return lead_audition if lead_audition else "no actor has been hired for this role"
+        return (
+            session.query(Audition)
+            .options(joinedload(Audition.actor))  
+            .filter_by(role_id=self.id, hired=True)
+            .order_by(Audition.id.asc())
+            .all()
+        )
+
+    def lead(self):
+        hired = self.hired_auditions()
+        if hired:
+            return hired[0].actor.name
+        return "No actor has been hired for this role."
 
     def understudy(self):
-        
-        session = object_session(self)
-        hired_auditions = session.query(Audition).filter(Audition.role_id == self.id, Audition.hired == True).order_by(Audition.id).all()
-        return hired_auditions[1] if len(hired_auditions) > 1 else "no actor has been hired for understudy for this role"
-
+        hired = self.hired_auditions()
+        if len(hired) > 1:
+            return  hired[1].actor.name
+        return "No actor has been hired as an understudy for this role."
 
 
 class Audition(Base):
