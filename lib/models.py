@@ -21,7 +21,7 @@ class Role(Base):
     __tablename__ = "roles"
     id = Column(Integer, primary_key= True, autoincrement=True)
     character_name=Column(String, nullable=False)
-    auditions = relationship("Audition", back_populates="actor")
+    auditions = relationship("Audition", back_populates="role")
 
 
 class Audition(Base):
