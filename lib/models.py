@@ -23,6 +23,12 @@ class Role(Base):
     character_name=Column(String, nullable=False)
     auditions = relationship("Audition", back_populates="role")
 
+    #method to return all actors in for this role
+    
+    def actors(self):
+        for audition in self.auditions:
+            return [audition.actor.name]
+        
 
 class Audition(Base):
     __tablename__ = "auditions"
