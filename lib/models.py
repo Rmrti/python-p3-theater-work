@@ -29,6 +29,16 @@ class Role(Base):
         for audition in self.auditions:
             return [audition.actor.name]
         
+    #method to return a list of locations from the auditions associated with role
+
+    def locations(self):
+        for audition in self.auditions:
+            return [audition.location]
+        
+   
+
+
+
 
 class Audition(Base):
     __tablename__ = "auditions"
