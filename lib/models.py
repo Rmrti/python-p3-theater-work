@@ -17,12 +17,12 @@ class Actor(Base):
     id = Column(Integer, primary_key= True, autoincrement=True)
 
     name = Column(String, nullable=False)
-    auditions = relationship("Audition", back_populates="actor")
+    auditions = relationship("Audition", backref="actor")
 class Role(Base):
     __tablename__ = "roles"
     id = Column(Integer, primary_key= True, autoincrement=True)
     character_name=Column(String, nullable=False)
-    auditions = relationship("Audition", back_populates="role", lazy="dynamic")
+    auditions = relationship("Audition", backref="role", lazy="dynamic")
 
     def actors(self):
         
@@ -66,9 +66,6 @@ class Audition(Base):
     phone = Column(Integer, nullable=False)
     hired= Column(Boolean, nullable=False)
 
-    #Relationships
-    actor = relationship("Actor", back_populates="auditions")
-    role = relationship("Role", back_populates="auditions")
 
     def call_back(self):
         self.hired = True
