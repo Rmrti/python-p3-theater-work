@@ -1,6 +1,7 @@
 from sqlalchemy import ForeignKey, Column, Integer, String, MetaData, Boolean
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm.session import object_session
 
 convention = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
@@ -21,44 +22,29 @@ class Role(Base):
     __tablename__ = "roles"
     id = Column(Integer, primary_key= True, autoincrement=True)
     character_name=Column(String, nullable=False)
-    auditions = relationship("Audition", back_populates="role")
+    auditions = relationship("Audition", back_populates="role", lazy="dynamic")
 
-    #method to return all actors in for this role
-    
     def actors(self):
-        for audition in self.auditions:
-            return [audition.actor.name]
         
-    #method to return a list of locations from the auditions associated with role
+        session = object_session(self)
+        return [actor.name for actor in session.query(Actor).join(Audition).filter(Audition.role_id == self.id).all()]
 
     def locations(self):
-        for audition in self.auditions:
-            return [audition.location]
         
-    #method to return first hired audition
-    
-    def hired_auditions(self):
-        hired_auditions=[audition for audition in self.auditions if audition.hired]
-        return hired_auditions
-    
-    #method to return first hired audition
+        session = object_session(self)
+        return [loc for (loc,) in session.query(Audition.location).filter(Audition.role_id == self.id).distinct().all()]
 
     def lead(self):
-        hired_auditions= hired_auditions()
-        if hired_auditions:
-            return hired_auditions[0]
-        else:
-            return "No actor has been hired for this role"
         
-    #return the second hired audition
+        session = object_session(self)
+        lead_audition = session.query(Audition).filter(Audition.role_id == self.id, Audition.hired == True).order_by(Audition.id).first()
+        return lead_audition if lead_audition else "no actor has been hired for this role"
 
     def understudy(self):
-        hired_auditions= hired_auditions()
-        if len(hired_auditions) > 1:
-            return hired_auditions[0]
-        else:
-            return "no actor has been hired for the understudyt for this role"
-
+        
+        session = object_session(self)
+        hired_auditions = session.query(Audition).filter(Audition.role_id == self.id, Audition.hired == True).order_by(Audition.id).all()
+        return hired_auditions[1] if len(hired_auditions) > 1 else "no actor has been hired for understudy for this role"
 
 
 
