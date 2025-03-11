@@ -36,4 +36,8 @@ class Audition(Base):
     #Relationships
     actor = relationship("Actor", back_populates="auditions")
     role = relationship("Role", back_populates="auditions")
+
+    def call_back(self):
+        self.hired = True
+    
     
