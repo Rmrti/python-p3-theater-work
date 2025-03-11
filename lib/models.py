@@ -9,7 +9,7 @@ metadata = MetaData(naming_convention=convention)
 
 Base = declarative_base(metadata=metadata)
 
-tb_id = Column(Integer, primary_Key= True, autoincrement=True)
+# tb_id = Column(Integer, primary_Key= True, autoincrement=True)
 
 class Actor(Base):
     __tablename__ = "actors"
