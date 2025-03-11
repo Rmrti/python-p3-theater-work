@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Column, Integer, String, MetaData
+from sqlalchemy import ForeignKey, Column, Integer, String, MetaData, Boolean
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -8,3 +8,10 @@ convention = {
 metadata = MetaData(naming_convention=convention)
 
 Base = declarative_base(metadata=metadata)
+
+class Actor(Base):
+    __tablename__ = "actors"
+    id = Column(Integer, primary_Key= True, autoincrement=True)
+
+    name = Column(String, nullable=False)
+    auditions = relationship("Audition", back_populates="actor")
